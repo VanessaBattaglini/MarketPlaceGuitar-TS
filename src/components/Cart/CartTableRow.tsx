@@ -25,6 +25,7 @@ import { CartItem } from '../../types/types';
 import { CartActions, CART_ACTION_TYPES } from '../../reducer/cart-reducer';
 import { Dispatch } from 'react';
 import CartButton from '../Button/CartButton';
+import { useNotification } from '../../contexts/NotificationContext';
 
 /**
  * Props para el componente CartTableRow
@@ -86,6 +87,7 @@ interface CartTableRowProps {
  */
 export default function CartTableRow({ item, dispatch }: CartTableRowProps) {
   const { id, name, image, price, quantity } = item;
+  const notification = useNotification();
 
   /**
    * Handlers para las acciones del carrito
@@ -117,12 +119,15 @@ export default function CartTableRow({ item, dispatch }: CartTableRowProps) {
   /**
    * Remueve completamente el item del carrito
    * No respeta límites de cantidad, elimina directamente
+   * Muestra notificación de confirmación
    * 
    * @function handleRemove
    * @returns {void}
    */
-  const handleRemove = () =>
+  const handleRemove = () => {
     dispatch({ type: CART_ACTION_TYPES.REMOVE_FROM_CART, payload: { id } });
+    notification.warning(`${name} removida del carrito`);
+  };
 
   return (
     <tr>

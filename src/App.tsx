@@ -22,9 +22,11 @@
 import { useEffect } from 'react';
 import Guitar from "./components/Guitar";
 import Header from "./components/Header";
+import ToastContainer from "./components/Notifications/ToastContainer";
 import { useCartWithPersistence } from "./hooks/useCartWithPersistence";
 import { useTheme } from "./hooks/useTheme";
 import { validateConfig, logConfig } from './config/app.config';
+import { useNotification } from './contexts/NotificationContext';
 
 /**
  * Componente principal de la aplicación (root)
@@ -67,6 +69,11 @@ function App() {
   useTheme()
 
   // ========================================================================
+  // Sistema de notificaciones
+  // ========================================================================
+  const notification = useNotification();
+
+  // ========================================================================
   // Validación y logging de configuración
   // ========================================================================
   
@@ -89,11 +96,12 @@ function App() {
       console.log('✅ Configuración validada correctamente');
     } catch (error) {
       console.error('❌ Error de configuración:', error);
+      notification.error('Error de configuración de la aplicación');
       if (import.meta.env.DEV) {
         throw error; // En desarrollo, falla el app
       }
     }
-  }, []);
+  }, [notification]);
 
   // ========================================================================
   // State del carrito
@@ -118,13 +126,16 @@ function App() {
   // ========================================================================
 
   /**
-   * Si hay error de persistencia, loguearlo
+   * Si hay error de persistencia, mostrar notificación
    * Pero la app sigue funcionando (es no-crítico)
    * El usuario puede seguir comprando, solo que sin persistencia
    */
-  if (persistenceStatus === 'error') {
-    console.warn('⚠️  Advertencia de persistencia:', persistenceError);
-  }
+  useEffect(() => {
+    if (persistenceStatus === 'error' && persistenceError) {
+      console.warn('⚠️  Advertencia de persistencia:', persistenceError);
+      notification.error(persistenceError);
+    }
+  }, [persistenceStatus, persistenceError, notification]);
 
   return (
     <>
@@ -158,6 +169,9 @@ function App() {
           </p>
         </div>
       </footer>
+
+      {/* Sistema de notificaciones toast */}
+      <ToastContainer />
     </>
   );
 }

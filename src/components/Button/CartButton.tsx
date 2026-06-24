@@ -13,11 +13,18 @@
  * - Estilos Bootstrap integrados
  * - Soporte para contenido personalizado (children)
  * - Soporta estado disabled
+ * - ✨ Animación al hacer clic: elevación + cambio de color + escala
+ * 
+ * Animación:
+ * - Duración: 600ms
+ * - Efecto: Elevación del botón + cambio de color + sombra expandida
+ * - Timing: ease-out para un efecto natural
  * 
  * Arquitectura:
- * - Componente de presentación puro (no tiene estado)
+ * - Componente de presentación con estado local (isClicked)
  * - Todo controlado por props
  * - BUTTON_CONFIG centraliza estilos y labels ARIA
+ * - CartButton.css proporciona las animaciones
  * 
  * @example
  * <CartButton variant="add" onClick={handleAdd} />
@@ -28,7 +35,8 @@
  * @module components/Button/CartButton
  */
 
-import { ReactNode } from 'react';
+import { ReactNode, useState } from 'react';
+import './CartButton.css';
 
 /**
  * Props para el componente CartButton
@@ -215,17 +223,43 @@ export default function CartButton({
   className = '',
   disabled = false,
 }: CartButtonProps) {
+  // Estado para la animación del clic
+  const [isClicked, setIsClicked] = useState(false);
+
   // Obtener configuración según variante
   const config = BUTTON_CONFIG[variant];
   
-  // Concatenar clases CSS: variante + adicionales
-  const cssClasses = `${config.cssClass} ${className}`.trim();
+  // Determinar la clase de animación según la variante
+  const animationClass = isClicked 
+    ? (variant === 'add' ? 'btn-clicked-add' : 'btn-clicked')
+    : '';
+  
+  // Concatenar clases CSS: variante + adicionales + animación
+  const cssClasses = `${config.cssClass} ${className} ${animationClass}`.trim();
+
+  /**
+   * Handler mejorado que:
+   * 1. Activa la animación (btn-clicked o btn-clicked-add según variante)
+   * 2. Ejecuta el onClick original
+   * 3. Desactiva la animación después de 600ms
+   * 
+   * Para botones "add": cambia a verde durante la animación
+   */
+  const handleClick = () => {
+    setIsClicked(true);
+    onClick();
+    
+    // Remover la clase después de la animación
+    setTimeout(() => {
+      setIsClicked(false);
+    }, 600);
+  };
 
   return (
     <button
       type="button"
       className={cssClasses}
-      onClick={onClick}
+      onClick={handleClick}
       disabled={disabled}
       aria-label={config.ariaLabel}
     >

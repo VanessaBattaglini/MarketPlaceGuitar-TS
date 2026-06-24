@@ -16,6 +16,8 @@ import CartTable from "./Cart/CartTable";
 import EmptyCart from "./Cart/EmptyCart";
 import CartButton from "./Button/CartButton";
 import ThemeToggle from "./ThemeToggle/ThemeToggle";
+import { useNotification } from "../contexts/NotificationContext";
+import "./Cart/Cart.css";
 
 /**
  * Props para el Header
@@ -57,13 +59,17 @@ export default function Header({ cart, dispatch }: HeaderProps) {
    * Se actualiza solo cuando 'cart' cambia
    */
   const isEmpty = useMemo(() => cart.length === 0, [cart]);
+  const notification = useNotification();
 
   /**
    * Handler para vaciar el carrito
    * Despacha acción CLEAR_CART al reducer
+   * y muestra notificación
    */
-  const handleClearCart = () =>
+  const handleClearCart = () => {
     dispatch({ type: CART_ACTION_TYPES.CLEAR_CART });
+    notification.info('Carrito vaciado');
+  };
 
   return (
     <header className="py-5 header">

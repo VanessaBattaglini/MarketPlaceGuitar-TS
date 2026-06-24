@@ -26,6 +26,7 @@ import type { Guitar } from "../types/types";
 import type { CartActions } from "../reducer/cart-reducer";
 import { CART_ACTION_TYPES } from "../reducer/cart-reducer";
 import CartButton from "./Button/CartButton";
+import { useNotification } from "../contexts/NotificationContext";
 
 /**
  * Props para el componente Guitar
@@ -85,6 +86,7 @@ type GuitarProps = {
  */
 export default function Guitar({ guitar, dispatch }: GuitarProps) {
   const { name, image, description, price } = guitar;
+  const notification = useNotification();
 
   /**
    * Handler para agregar guitarra al carrito
@@ -97,11 +99,15 @@ export default function Guitar({ guitar, dispatch }: GuitarProps) {
    * - Si guitarra ya existe en carrito: aumenta cantidad
    * - Si no existe: la agrega con cantidad inicial (1)
    * 
+   * Además, muestra una notificación de éxito
+   * 
    * @function handleAddToCart
    * @returns {void}
    */
-  const handleAddToCart = () =>
+  const handleAddToCart = () => {
     dispatch({ type: CART_ACTION_TYPES.ADD_TO_CART, payload: { item: guitar } });
+    notification.success(`${name} agregada al carrito`);
+  };
 
   return (
     <div className="col-md-6 col-lg-4 my-4 row align-items-center">
