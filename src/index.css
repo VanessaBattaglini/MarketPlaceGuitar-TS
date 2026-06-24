@@ -1,4 +1,105 @@
 @charset "UTF-8";
+
+/* Importar variables CSS y temas */
+@import "./styles/variables.css";
+
+/* ========================================================================
+   Dark Mode - Sobrescribir Bootstrap y estilos personalizados
+   ======================================================================== */
+
+:root.dark {
+  --bs-body-color: #f8f9fa;
+  --bs-body-bg: #212529;
+  --bs-border-color: #495057;
+  --bs-bg-opacity: 1;
+  
+  /* Colores de Bootstrap */
+  --bs-secondary: #adb5bd;
+  --bs-dark: #f8f9fa;
+  --bs-light: #212529;
+}
+
+:root.dark body {
+  background-color: var(--bs-body-bg) !important;
+  color: var(--bs-body-color) !important;
+}
+
+:root.dark .bg-white {
+  background-color: #343a40 !important;
+  color: #f8f9fa !important;
+}
+
+:root.dark .bg-dark {
+  background-color: #343a40 !important;
+  color: #f8f9fa !important;
+}
+
+:root.dark .bg-primary {
+  background-color: #0d6efd !important;
+}
+
+:root.dark h1,
+:root.dark h2,
+:root.dark h3,
+:root.dark h4,
+:root.dark h5,
+:root.dark h6 {
+  color: #f8f9fa;
+}
+
+:root.dark .text-white {
+  color: #f8f9fa !important;
+}
+
+:root.dark .text-black {
+  color: #212529 !important;
+}
+
+:root.dark a {
+  color: #0d6efd;
+}
+
+:root.dark a:hover {
+  color: #0dcaf0;
+}
+
+:root.dark .btn-dark {
+  --bs-btn-bg: #495057;
+  --bs-btn-border-color: #495057;
+  color: #f8f9fa;
+}
+
+:root.dark .btn-dark:hover {
+  --bs-btn-bg: #5a6268;
+  --bs-btn-border-color: #5a6268;
+}
+
+:root.dark .table {
+  --bs-table-color: #f8f9fa;
+  --bs-table-border-color: #495057;
+}
+
+:root.dark .table tbody {
+  background-color: #343a40;
+}
+
+:root.dark input,
+:root.dark textarea,
+:root.dark select {
+  background-color: #343a40 !important;
+  color: #f8f9fa !important;
+  border-color: #495057 !important;
+}
+
+:root.dark .carrito:hover #carrito {
+  background-color: #343a40 !important;
+  color: #f8f9fa !important;
+}
+
+/* ========================================================================
+   Estilos Personalizados
+   ======================================================================== */
+
 .fw-black {
   font-weight: 900;
 }
@@ -753,6 +854,8 @@ button:not(:disabled),
     transform: translateX(0);
   }
 }
+
+/* Header */
 .header {
   background-image: linear-gradient(to right, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
   url("/img/header.jpg");
@@ -760,9 +863,16 @@ button:not(:disabled),
   background-size: cover;
   position: relative;
 }
+
+:root.dark .header {
+  background-image: linear-gradient(to right, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.9)), 
+  url("/img/header.jpg");
+}
+
 .header .header-guitarra {
   display: none;
 }
+
 @media (min-width: 992px) {
   .header .header-guitarra {
     display: block;

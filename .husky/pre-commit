@@ -1,0 +1,16 @@
+#!/bin/sh
+# Pre-commit hook: Run linting and type checking on staged files
+set -e
+
+echo "🔍 Running pre-commit checks..."
+
+# Run linting on staged files only
+if command -v npx &> /dev/null; then
+  echo "📝 Linting staged files with ESLint..."
+  npx lint-staged
+  
+  echo "✅ Pre-commit checks passed!"
+else
+  echo "⚠️  Warning: lint-staged not found, skipping linting"
+  exit 0
+fi

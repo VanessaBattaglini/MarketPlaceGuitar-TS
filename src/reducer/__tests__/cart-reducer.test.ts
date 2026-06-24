@@ -11,7 +11,7 @@ import {
   CART_ACTION_TYPES,
 } from '../cart-reducer';
 import { CART_CONFIG } from '../../config/cart.config';
-import type { Guitar, CartItem } from '../../types/types';
+import type { Guitar } from '../../types/types';
 
 // Mock data
 const mockGuitar: Guitar = {

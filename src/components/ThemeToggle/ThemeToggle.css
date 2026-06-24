@@ -1,0 +1,164 @@
+/**
+ * Estilos para el componente ThemeToggle
+ * 
+ * El botón muestra dos iconos:
+ * - ☀️ (sol) para light mode
+ * - 🌙 (luna) para dark mode
+ * 
+ * Se anima suavemente entre los modos
+ */
+
+.theme-toggle {
+  /* Estilos base */
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  margin: 0 8px;
+  
+  /* Apariencia */
+  background: transparent;
+  border: 2px solid var(--color-primary);
+  border-radius: 50%;
+  cursor: pointer;
+  
+  /* Transición suave */
+  transition: all var(--transition-base);
+  
+  /* Accesibilidad */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+/* Estado hover */
+.theme-toggle:hover {
+  background-color: var(--color-primary);
+  transform: scale(1.1);
+  box-shadow: 0 2px 8px rgba(13, 110, 253, 0.3);
+}
+
+/* Estado focus (teclado) */
+.theme-toggle:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.15);
+}
+
+/* Estado activo */
+.theme-toggle:active {
+  transform: scale(0.95);
+}
+
+/* Icono individual */
+.theme-icon {
+  position: absolute;
+  font-size: 1.2rem;
+  transition: all var(--transition-base);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+/* Icono light mode */
+.theme-icon-light {
+  opacity: 1;
+  transform: rotate(0deg) scale(1);
+}
+
+/* En dark mode, el icono de sol se oculta */
+:root.dark .theme-icon-light {
+  opacity: 0;
+  transform: rotate(-180deg) scale(0);
+}
+
+/* Icono dark mode */
+.theme-icon-dark {
+  opacity: 0;
+  transform: rotate(180deg) scale(0);
+}
+
+/* En dark mode, el icono de luna se muestra */
+:root.dark .theme-icon-dark {
+  opacity: 1;
+  transform: rotate(0deg) scale(1);
+}
+
+/* Respetar preferencia de movimiento reducido */
+@media (prefers-reduced-motion: reduce) {
+  .theme-toggle,
+  .theme-icon {
+    transition: none;
+  }
+
+  .theme-toggle:hover {
+    transform: none;
+  }
+
+  .theme-toggle:active {
+    transform: none;
+  }
+
+  .theme-icon-light {
+    transform: none;
+  }
+
+  :root.dark .theme-icon-light {
+    transform: none;
+  }
+
+  .theme-icon-dark {
+    transform: none;
+  }
+
+  :root.dark .theme-icon-dark {
+    transform: none;
+  }
+}
+
+/* Responsive: En pantallas pequeñas, hacer el botón más compacto */
+@media (max-width: 480px) {
+  .theme-toggle {
+    width: 40px;
+    height: 40px;
+    margin: 0 4px;
+    border-width: 1.5px;
+    font-size: 1rem;
+  }
+}
+
+/* Dark mode: Ajustar colores del botón */
+@media (prefers-color-scheme: dark) {
+  .theme-toggle {
+    border-color: var(--color-primary);
+  }
+
+  .theme-toggle:hover {
+    background-color: var(--color-primary);
+  }
+
+  .theme-toggle:focus-visible {
+    outline-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.25);
+  }
+}
+
+/* Estado disabled (por si acaso) */
+.theme-toggle:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  border-color: var(--color-text-muted);
+}
+
+.theme-toggle:disabled:hover {
+  background-color: transparent;
+  transform: none;
+  box-shadow: none;
+}

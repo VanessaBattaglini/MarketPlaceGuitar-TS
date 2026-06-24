@@ -1,0 +1,15 @@
+#!/bin/sh
+# Pre-push hook: Run tests and type checking before pushing
+set -e
+
+echo "🧪 Running pre-push checks..."
+
+# Run TypeScript compilation
+echo "📦 Building TypeScript..."
+npm run build
+
+# Run tests
+echo "🧪 Running tests..."
+npm run test:run
+
+echo "✅ All pre-push checks passed! Ready to push."

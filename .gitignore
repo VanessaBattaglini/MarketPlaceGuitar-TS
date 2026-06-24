@@ -12,6 +12,12 @@ dist
 dist-ssr
 *.local
 
+# Environment variables (gitignore)
+# .env.example se commitea, pero NO .env.local ni .env.production.local
+.env.local
+.env.*.local
+.env.production
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
@@ -23,3 +29,6 @@ dist-ssr
 *.sln
 *.sw?
 .qodo
+
+# Agent documentation (local)
+Agent/

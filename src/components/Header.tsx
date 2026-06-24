@@ -1,32 +1,66 @@
+/**
+ * Componente Header con carrito desplegable y tema
+ * 
+ * Responsabilidades:
+ * - Mostrar logo de la aplicación
+ * - Renderizar toggle de tema (light/dark)
+ * - Renderizar carrito con dropdown
+ * - Mostrar items del carrito, total y controles
+ * - Manejar acciones del carrito (aumentar, disminuir, remover, vaciar)
+ */
+
 import { CartItem } from "../types/types";
 import { useMemo, Dispatch } from "react";
 import { CartActions, CART_ACTION_TYPES } from "../reducer/cart-reducer";
 import CartTable from "./Cart/CartTable";
 import EmptyCart from "./Cart/EmptyCart";
 import CartButton from "./Button/CartButton";
+import ThemeToggle from "./ThemeToggle/ThemeToggle";
 
 /**
  * Props para el Header
+ * 
+ * @typedef {Object} HeaderProps
+ * @property {CartItem[]} cart - Items en el carrito
+ * @property {Dispatch<CartActions>} dispatch - Función para despachar acciones
  */
 type HeaderProps = {
-  /** Items en el carrito */
+  /** Items en el carrito para mostrar */
   cart: CartItem[];
-  /** Función dispatch para acciones del carrito */
+  /** Función dispatch del reducer para manejar acciones */
   dispatch: Dispatch<CartActions>;
 };
 
 /**
- * Componente Header con carrito desplegable
- * Muestra logo, y un carrito con los items
+ * Componente Header con carrito desplegable y toggle de tema
+ * 
+ * Muestra:
+ * - Logo de GuitarLA (clickeable)
+ * - Toggle de tema (light/dark mode)
+ * - Carrito con dropdown que contiene:
+ *   - Lista de items (o mensaje vacío)
+ *   - Total a pagar
+ *   - Botón para vaciar carrito
+ * 
+ * El carrito usa hover para mostrar/ocultar el dropdown
+ * Los items pueden aumentar/disminuir cantidad o removerse
+ * 
+ * @component
+ * @example
+ * <Header cart={state.cart} dispatch={dispatch} />
  */
 export default function Header({ cart, dispatch }: HeaderProps) {
   /**
    * Estado derivado: verifica si el carrito está vacío
+   * 
+   * Memoizado para evitar re-cálculos innecesarios
+   * Se actualiza solo cuando 'cart' cambia
    */
   const isEmpty = useMemo(() => cart.length === 0, [cart]);
 
   /**
    * Handler para vaciar el carrito
+   * Despacha acción CLEAR_CART al reducer
    */
   const handleClearCart = () =>
     dispatch({ type: CART_ACTION_TYPES.CLEAR_CART });
@@ -46,8 +80,12 @@ export default function Header({ cart, dispatch }: HeaderProps) {
             </a>
           </div>
 
-          {/* Carrito */}
+          {/* Carrito y Tema */}
           <nav className="col-md-6 a mt-5 d-flex align-items-start justify-content-end">
+            {/* Toggle de Tema */}
+            <ThemeToggle />
+
+            {/* Carrito */}
             <div className="carrito">
               <img
                 className="img-fluid"
