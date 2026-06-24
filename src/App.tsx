@@ -1,23 +1,20 @@
-import { useReducer, useEffect } from "react";
 import Guitar from "./components/Guitar";
 import Header from "./components/Header";
-import { cartReducer, initialState } from "./reducer/cart-reducer";
+import { useCartWithPersistence } from "./hooks/useCartWithPersistence";
 
+/**
+ * Componente principal de la aplicación
+ * Gestiona el carrito de compras y renderiza la interfaz
+ */
 function App() {
-
-  const [state, dispatch] = useReducer(cartReducer, initialState);
-
-
-  useEffect(() => {
-    localStorage.setItem("cart", JSON.stringify(state.cart));
-}, [state.cart]);
+  // Hook personalizado que maneja estado + persistencia
+  const [state, dispatch] = useCartWithPersistence();
 
   return (
     <>
       <Header
         cart={state.cart}
         dispatch={dispatch}
-        
       />
 
       <main className="container-xl mt-5">
@@ -27,7 +24,6 @@ function App() {
           {state.data.map((guitar) => (
             <Guitar key={guitar.id} guitar={guitar} dispatch={dispatch} />
           ))}
-          ;
         </div>
       </main>
 
