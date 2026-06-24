@@ -7,8 +7,13 @@ import { useCartWithPersistence } from "./hooks/useCartWithPersistence";
  * Gestiona el carrito de compras y renderiza la interfaz
  */
 function App() {
-  // Hook personalizado que maneja estado + persistencia
-  const [state, dispatch] = useCartWithPersistence();
+  // Hook personalizado que maneja estado + persistencia con manejo de errores
+  const [state, dispatch, persistenceStatus, persistenceError] = useCartWithPersistence();
+
+  // Mostrar error de persistencia si ocurre
+  if (persistenceStatus === 'error') {
+    console.error('Error de persistencia:', persistenceError);
+  }
 
   return (
     <>

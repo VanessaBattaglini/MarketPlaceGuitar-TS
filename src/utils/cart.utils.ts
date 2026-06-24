@@ -1,77 +1,113 @@
 /**
  * Utilidades para validación y manipulación de datos del carrito
+ * Usa Zod para validación type-safe
  */
 
 import { CartItem, Guitar } from '../types/types';
 import { CART_CONFIG } from '../config/cart.config';
+import { 
+  guitarSchema, 
+  cartItemSchema, 
+  cartArraySchema,
+  safeValidate,
+  getZodErrorMessages 
+} from '../schemas/guitar.schema';
+import { z } from 'zod';
 
 /**
- * Valida que un objeto sea un Guitar válido
+ * Valida que un objeto sea un Guitar válido usando Zod
  * @param data - Objeto a validar
  * @returns true si el objeto es un Guitar válido
  */
 export const isValidGuitar = (data: unknown): data is Guitar => {
-  if (typeof data !== 'object' || data === null) return false;
-  
-  const guitar = data as Record<string, unknown>;
-  return (
-    typeof guitar.id === 'number' &&
-    typeof guitar.name === 'string' &&
-    typeof guitar.image === 'string' &&
-    typeof guitar.description === 'string' &&
-    typeof guitar.price === 'number' &&
-    guitar.price > 0
-  );
+  return safeValidate(data, guitarSchema) !== null;
 };
 
 /**
- * Valida que un objeto sea un CartItem válido
+ * Valida que un objeto sea un CartItem válido usando Zod
  * @param data - Objeto a validar
  * @returns true si el objeto es un CartItem válido
  */
 export const isValidCartItem = (data: unknown): data is CartItem => {
-  if (!isValidGuitar(data)) return false;
-  
-  const item = data as Record<string, unknown>;
-  return (
-    typeof item.quantity === 'number' &&
-    item.quantity >= CART_CONFIG.MIN_ITEMS &&
-    item.quantity <= CART_CONFIG.MAX_ITEMS
-  );
+  return safeValidate(data, cartItemSchema) !== null;
 };
 
 /**
- * Valida que un array sea un carrito válido
+ * Valida que un array sea un carrito válido usando Zod
  * @param data - Array a validar
  * @returns true si es un array válido de CartItems
  */
 export const isValidCart = (data: unknown): data is CartItem[] => {
-  if (!Array.isArray(data)) return false;
-  return data.every(isValidCartItem);
+  return safeValidate(data, cartArraySchema) !== null;
+};
+
+/**
+ * Valida y retorna un Guitar, lanzando error si es inválido
+ * Útil para operaciones críticas
+ * @param data - Objeto a validar
+ * @returns Guitar validado
+ * @throws Error si la validación falla
+ */
+export const validateGuitar = (data: unknown): Guitar => {
+  try {
+    return guitarSchema.parse(data);
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      const messages = getZodErrorMessages(error);
+      throw new Error(`Validación de guitarra fallida: ${messages.join(', ')}`);
+    }
+    throw error;
+  }
+};
+
+/**
+ * Valida y retorna un CartItem, lanzando error si es inválido
+ * @param data - Objeto a validar
+ * @returns CartItem validado
+ * @throws Error si la validación falla
+ */
+export const validateCartItem = (data: unknown): CartItem => {
+  try {
+    return cartItemSchema.parse(data);
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      const messages = getZodErrorMessages(error);
+      throw new Error(`Validación de item inválida: ${messages.join(', ')}`);
+    }
+    throw error;
+  }
 };
 
 /**
  * Carga el carrito desde localStorage de forma segura
- * Si hay error en los datos, retorna un array vacío
+ * Si hay error en los datos, retorna un array vacío y registra la advertencia
  * @returns Array de CartItems o array vacío si hay error
  */
 export const loadCartFromStorage = (storageKey: string): CartItem[] => {
   try {
     const storedData = localStorage.getItem(storageKey);
     
-    if (!storedData) return [];
+    if (!storedData) {
+      return [];
+    }
     
     const parsedData = JSON.parse(storedData);
     
-    // Validar que sea un carrito válido
+    // Validar que sea un carrito válido usando Zod
     if (isValidCart(parsedData)) {
       return parsedData;
     }
     
-    console.warn('Datos del carrito inválidos en localStorage, iniciando vacío');
+    console.warn(
+      'Datos del carrito inválidos en localStorage. Iniciando carrito vacío.'
+    );
     return [];
   } catch (error) {
-    console.warn('Error al cargar carrito de localStorage:', error);
+    if (error instanceof SyntaxError) {
+      console.error('Error al parsear carrito de localStorage (JSON inválido):', error);
+    } else {
+      console.error('Error inesperado al cargar carrito de localStorage:', error);
+    }
     return [];
   }
 };
@@ -87,10 +123,20 @@ export const saveCartToStorage = (
   storageKey: string
 ): boolean => {
   try {
+    // Validar que el carrito sea válido antes de guardar
+    if (!isValidCart(cart)) {
+      console.error('Intento de guardar carrito inválido');
+      return false;
+    }
+    
     localStorage.setItem(storageKey, JSON.stringify(cart));
     return true;
   } catch (error) {
-    console.error('Error al guardar carrito en localStorage:', error);
+    if (error instanceof DOMException && error.code === 22) {
+      console.error('localStorage lleno, no se puede guardar carrito');
+    } else {
+      console.error('Error al guardar carrito en localStorage:', error);
+    }
     return false;
   }
 };
