@@ -34,8 +34,6 @@ export default function CartTableRow({ item, dispatch }: CartTableRowProps) {
   const handleRemove = () =>
     dispatch({ type: CART_ACTION_TYPES.REMOVE_FROM_CART, payload: { id } });
 
-  const subtotal = (price * quantity).toFixed(2);
-
   return (
     <tr>
       {/* Imagen */}

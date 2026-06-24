@@ -11,6 +11,11 @@ import {
 } from '../utils/cart.utils';
 
 /**
+ * Re-exportar CART_ACTION_TYPES para uso en componentes
+ */
+export { CART_ACTION_TYPES };
+
+/**
  * Define todas las acciones posibles en el carrito
  */
 export type CartActions = 
